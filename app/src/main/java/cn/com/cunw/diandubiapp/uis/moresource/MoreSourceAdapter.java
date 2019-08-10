@@ -70,7 +70,7 @@ public class MoreSourceAdapter extends RecyclerView.Adapter<MoreSourceAdapter.VH
         });
 
         SourceBean bean = mList.get(position);
-        vh.tv_name.setText(bean.gradeName + " " + bean.termName);
+        vh.tv_name.setText(bean.gradeName + "(" + bean.termName + ")");
         vh.ll_content.removeAllViews();
         List<SourceBean.ItemBean> list = bean.bookList;
         if (list != null) {

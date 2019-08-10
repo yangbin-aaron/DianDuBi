@@ -74,7 +74,18 @@ public abstract class BaseCallBack<T> implements Callback<T> {
 
     @Override
     public void onError(Response<T> response) {
-        onError(response.code(), response.message());
+        int code = response.code();
+        String message = response.message();
+        try {
+            ResponseBody body = response.getRawResponse().body();
+            byte[] bytes = body.bytes();
+            JSONObject object = new JSONObject(new String(bytes));
+            code = object.optInt("code");
+            message = object.optString("message");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        onError(code, message);
     }
 
     @Override

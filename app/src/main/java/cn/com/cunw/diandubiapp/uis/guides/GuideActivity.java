@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Message;
 import android.view.View;
+import android.widget.Button;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Progress;
@@ -26,6 +27,7 @@ import cn.com.cunw.diandubiapp.preference.SourceSpHelper;
 import cn.com.cunw.diandubiapp.uis.main.MainActivity;
 import cn.com.cunw.diandubiapp.uis.moresource.MoreSourcePresenter;
 import cn.com.cunw.diandubiapp.uis.moresource.MoreSourceView;
+import cn.com.cunw.diandubiapp.utils.ToastUtis;
 import cn.com.cunw.diandubiapp.views.GuideProgressView;
 
 /**
@@ -34,7 +36,7 @@ import cn.com.cunw.diandubiapp.views.GuideProgressView;
  * @des 引导页，自动下载资源
  * @copyright 湖南新云网科技有限公司
  */
-public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implements MoreSourceView {
+public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implements MoreSourceView, View.OnClickListener {
     @Override
     public int initLayout() {
         return R.layout.activity_guide;
@@ -46,15 +48,19 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
     }
 
     private GuideProgressView guide_pro;
+    private Button mButton;
 
     @Override
     public void initViews() {
         super.initViews();
+        mButton = findViewById(R.id.btn);
+        mButton.setVisibility(View.INVISIBLE);
+        mButton.setOnClickListener(this);
         guide_pro = findViewById(R.id.guide_pro);
         mPresenter.getMoreSourceList();
     }
 
-    public void joinMainActivity(View view) {
+    private void joinMainActivity() {
         MainActivity.startActivity(this);
         finish();
     }
@@ -76,7 +82,7 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
                     int rate = (int) ((currSize + mCurrSize) * 100 / mTotalSize);
                     guide_pro.updateRate(rate);
                     if (rate == 100) {
-                        joinMainActivity(null);
+                        joinMainActivity();
                         SourceSpHelper.getInstance().saveDownLoadedStatus();
                     }
                 }
@@ -99,10 +105,30 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
 
     @Override
     public void initAutoList(List<SourceBean.ItemBean> list, long totalSize) {
+        findViewById(R.id.progreBar).setVisibility(View.GONE);
+        if (list == null || list.size() == 0) {
+            joinMainActivity();
+            return;
+        }
+        mButton.setVisibility(View.VISIBLE);
         mTotalSize = totalSize;
         // 下载
         for (SourceBean.ItemBean itemBean : list) {
             DownLoadHelper.getInstance().downSource(itemBean);
         }
+    }
+
+    @Override
+    public void onError(String message) {
+        joinMainActivity();
+    }
+
+    @Override
+    public void onBackPressed() {
+    }
+
+    @Override
+    public void onClick(View v) {
+        joinMainActivity();
     }
 }

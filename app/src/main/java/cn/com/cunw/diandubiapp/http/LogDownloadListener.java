@@ -5,6 +5,8 @@ import android.os.Message;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okserver.download.DownloadListener;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 
 import cn.com.cunw.diandubiapp.interfaces.Contants;
@@ -34,6 +36,7 @@ public class LogDownloadListener extends DownloadListener {
     public void onProgress(Progress progress) {
         System.out.println("onProgress: " + progress);
         mMessage.obj = progress;
+        EventBus.getDefault().post(mMessage);
     }
 
     @Override

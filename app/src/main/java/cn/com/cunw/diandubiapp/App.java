@@ -42,6 +42,8 @@ public class App extends Application {
 
     private void initOkGo() {
         HttpHeaders headers = new HttpHeaders();
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJqd3QiLCJpYXQiOjE1NjU0MTUyODAsInN1YiI6IntcImlkXCI6XCI2MDQ2ODYxNDMwNDQzMjUzNzdcIixcImFjY291bnRcIjpcIk9SRzAwMDAzM1Rlc3QzMVwiLFwiYXBwQ29kZVwiOlwiQTA1XCJ9IiwiaXNzIjoiY3VudyIsImV4cCI6MTU2NTQyMjQ4MH0._hvJkArlfy76Vfq0AzlToVUQ8Xjt7UXwmeD2BiopTkA";
+        headers.put("Authorization", token);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         //log相关

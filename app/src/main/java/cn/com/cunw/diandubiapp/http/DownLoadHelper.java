@@ -9,6 +9,7 @@ import com.lzy.okserver.OkDownload;
 import java.io.File;
 
 import cn.com.cunw.diandubiapp.beans.SourceBean;
+import cn.com.cunw.diandubiapp.interfaces.Contants;
 
 /**
  * @author YangBin
@@ -35,7 +36,7 @@ public class DownLoadHelper {
         // 设置下载，保存文件的目录
         OkDownload.getInstance().setFolder(sPath);
         // 最大下载数
-        OkDownload.getInstance().getThreadPool().setCorePoolSize(1);
+        OkDownload.getInstance().getThreadPool().setCorePoolSize(2);
     }
 
     public String getPath() {
@@ -50,7 +51,7 @@ public class DownLoadHelper {
     public void downSource(SourceBean.ItemBean itemBean) {
         GetRequest<File> request = OkGo.get(itemBean.downloadUrl);
         OkDownload.request(itemBean.id, request)
-                .fileName(itemBean.fileName) // 文件名
+                .fileName(itemBean.getFileName()) // 文件名
                 .save()
                 .register(new LogDownloadListener())
                 .start();

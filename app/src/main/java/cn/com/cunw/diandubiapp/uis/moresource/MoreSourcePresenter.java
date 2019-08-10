@@ -82,7 +82,7 @@ public class MoreSourcePresenter extends BasePresenter<MoreSourceModel, MoreSour
             @Override
             public void onError(int code, String message) {
                 super.onError(code, message);
-                ToastUtis.show(message);
+                mView.onError(message);
             }
         });
     }

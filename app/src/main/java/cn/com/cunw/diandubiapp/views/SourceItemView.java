@@ -3,11 +3,14 @@ package cn.com.cunw.diandubiapp.views;
 import android.content.Context;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okserver.OkDownload;
 import com.lzy.okserver.download.DownloadTask;
@@ -51,9 +54,10 @@ public class SourceItemView extends RelativeLayout {
     private TextView tv_sub;
     private TextView tv_pro;
     private SourceProgressView progressView;
+    private ImageView iv_down_status;
 
     private void init(Context context) {
-        EventBus.getDefault().register(mContext);
+        EventBus.getDefault().register(this);
         mContext = context;
         LayoutInflater.from(context).inflate(R.layout.include_source, this);
         view_bg = findViewById(R.id.view_bg);
@@ -61,6 +65,7 @@ public class SourceItemView extends RelativeLayout {
         tv_sub = findViewById(R.id.tv_sub);
         tv_pro = findViewById(R.id.tv_pro);
         progressView = findViewById(R.id.progressView);
+        iv_down_status = findViewById(R.id.iv_down_status);
 
         setOnClickListener(new OnClickListener() {
             @Override
@@ -112,6 +117,21 @@ public class SourceItemView extends RelativeLayout {
                 break;
         }
 
+        int status = 0;
+        try {
+            DownloadTask task = OkDownload.getInstance().getTask(mItemBean.id);
+            if (task != null) {
+                status = task.progress.status;
+                int rate = (int) (task.progress.currentSize * 100 / task.progress.totalSize);
+                if (rate < 100) {
+                    updateRate(rate);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        updateDownStatus(status);
+
         initLoaclStatus();
     }
 
@@ -130,17 +150,53 @@ public class SourceItemView extends RelativeLayout {
      */
     private void initLoaclStatus() {
         boolean exists = exists();
+        setTag(exists);
         // 本地是否存在
         if (exists) {
-            // 存在
-        } else {
-            // 不存在
+            tv_pro.setText("已下载");
         }
     }
 
+    private void updateDownStatus(int status) {
+        switch (status) {
+            case Progress.ERROR:
+            case Progress.FINISH:
+            case Progress.NONE:
+                iv_down_status.setImageResource(R.color.transparent);
+                break;
+            case Progress.WAITING:
+                iv_down_status.setImageResource(R.drawable.ic_down_waiting);
+                break;
+            case Progress.LOADING:
+                iv_down_status.setImageResource(R.drawable.ic_down_pause);
+                break;
+            case Progress.PAUSE:
+                iv_down_status.setImageResource(R.drawable.ic_down_start);
+                break;
+        }
+    }
+
+    private File getFile() {
+        return new File(DownLoadHelper.getInstance().getPath() + mItemBean.getFileName());
+    }
+
     private boolean exists() {
-        File file = new File(DownLoadHelper.getInstance().getPath() + mItemBean.fileName);
+        File file = getFile();
+        Progress progress = DownloadManager.getInstance().get(mItemBean.id);
+        if (progress != null) {
+            if (progress.status == Progress.NONE && file.exists()) {
+                // 没有下载完成的
+                file.delete();
+                return false;
+            }
+        }
         return file.exists();
+    }
+
+    private void deleteFile() {
+        if (exists()) {
+            getFile().delete();
+        }
     }
 
     private void load() {
@@ -151,13 +207,14 @@ public class SourceItemView extends RelativeLayout {
             }
             return;
         }
-        if (exists()) {
-            ToastUtis.show("本地已存在该文件！");
-            return;
-        }
+        boolean exists = (boolean) getTag();
         DownloadTask task = OkDownload.getInstance().getTask(mItemBean.id);
         if (task == null) {
-            DownLoadHelper.getInstance().downSource(mItemBean);
+            if (exists) {
+                ToastUtis.show("本地已存在该文件！");
+            } else {
+                DownLoadHelper.getInstance().downSource(mItemBean);
+            }
         } else {
             Progress progress = task.progress;
             int proStatus = progress.status;
@@ -165,6 +222,10 @@ public class SourceItemView extends RelativeLayout {
                 task.start();
             } else if (proStatus == Progress.LOADING || proStatus == Progress.WAITING) {
                 task.pause();
+            } else {
+                if (exists) {
+                    ToastUtis.show("本地已存在该文件！");
+                }
             }
         }
     }
@@ -179,8 +240,12 @@ public class SourceItemView extends RelativeLayout {
     public void onEventMainThread(Message message) {
         switch (message.what) {
             case Contants.WHAT_REGISTER_EVENTBUG:
+                DownloadTask task = OkDownload.getInstance().getTask(mItemBean.id);
+                if (task != null) {
+                    task.pause();
+                }
                 try {
-                    EventBus.getDefault().unregister(mContext);
+                    EventBus.getDefault().unregister(this);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -194,6 +259,7 @@ public class SourceItemView extends RelativeLayout {
                     if (progress.status == Progress.LOADING || progress.status == Progress.PAUSE || progress.status == Progress.FINISH) {
                         int rate = (int) (currSize * 100 / totalSize);
                         if (rate == 100) {
+                            ToastUtis.show(mItemBean.fileName + "下载完成");
                             initStatusView();
                         }
                         try {
@@ -201,9 +267,13 @@ public class SourceItemView extends RelativeLayout {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    } else {
+                    } else if (progress.status == Progress.ERROR) {
+                        deleteFile();
                         initStatusView();
+                    } else {
+
                     }
+                    updateDownStatus(progress.status);
                 }
                 break;
         }

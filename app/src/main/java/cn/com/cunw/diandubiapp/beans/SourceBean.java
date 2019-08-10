@@ -25,5 +25,9 @@ public class SourceBean {
         public boolean autoDownload;
         public boolean allowFreeDownload;
         public boolean bugflag;
+
+        public String getFileName() {
+            return id + fileName;
+        }
     }
 }

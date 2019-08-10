@@ -10,4 +10,5 @@
     <color name="gray">#CDCDCD</color>
     <color name="blue">#AAAAFF</color>
     <color name="pro_bg">#3BB8EF</color>
+    <color name="transparent">@android:color/transparent</color>
 </resources>

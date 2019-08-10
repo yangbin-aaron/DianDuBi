@@ -6,7 +6,6 @@ import android.view.View;
 
 import cn.com.cunw.diandubiapp.R;
 import cn.com.cunw.diandubiapp.base.BaseActivity;
-import cn.com.cunw.diandubiapp.uis.guides.GuideActivity;
 import cn.com.cunw.diandubiapp.uis.localsource.LocalSourceActivity;
 
 /**
@@ -40,11 +39,14 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         sActivity = null;
-        // 停止下载服务
-        GuideActivity.mI = -1;
     }
 
     public void joinLoaclActivity(View view) {
         LocalSourceActivity.startActivity(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
     }
 }

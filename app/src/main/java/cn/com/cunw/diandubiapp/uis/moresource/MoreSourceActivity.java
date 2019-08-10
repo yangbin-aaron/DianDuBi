@@ -8,13 +8,19 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import java.util.ArrayList;
+import com.lzy.okgo.db.DownloadManager;
+import com.lzy.okgo.model.Progress;
+import com.lzy.okserver.OkDownload;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 
 import cn.com.cunw.diandubiapp.R;
 import cn.com.cunw.diandubiapp.base.mvp.BaseMvpActivity;
 import cn.com.cunw.diandubiapp.beans.SourceBean;
 import cn.com.cunw.diandubiapp.dialogs.SourceDialog;
+import cn.com.cunw.diandubiapp.interfaces.Contants;
 import cn.com.cunw.diandubiapp.interfaces.MySourceDialogListener;
 import cn.com.cunw.diandubiapp.utils.NetworkUtil;
 import cn.com.cunw.diandubiapp.utils.ToastUtis;
@@ -50,6 +56,12 @@ public class MoreSourceActivity extends BaseMvpActivity<MoreSourcePresenter> imp
     @Override
     public void initViews() {
         super.initViews();
+
+        List<Progress> processes = DownloadManager.getInstance().getAll();
+        for (Progress pro : processes) {
+            Log.e(pro.tag + "   ---》》 ", pro.status + " - " + pro.fileName + "\ntask是否存在：" + (OkDownload.getInstance().getTask(pro.tag) != null));
+        }
+
         mSwipeRefreshLayout = findViewById(R.id.srl_source);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
@@ -90,13 +102,21 @@ public class MoreSourceActivity extends BaseMvpActivity<MoreSourcePresenter> imp
     }
 
     @Override
-    public void initAutoList(List<SourceBean.ItemBean> list,long totalSize) {
+    public void initAutoList(List<SourceBean.ItemBean> list, long totalSize) {
 
     }
 
     @Override
-    public void onEventMainThread(Message message) {
-        super.onEventMainThread(message);
+    public void onError(String message) {
+        ToastUtis.show(message);
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Message message = new Message();
+        message.what = Contants.WHAT_REGISTER_EVENTBUG;
+        EventBus.getDefault().post(message);
     }
 }
