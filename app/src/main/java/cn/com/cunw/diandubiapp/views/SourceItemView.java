@@ -3,14 +3,12 @@ package cn.com.cunw.diandubiapp.views;
 import android.content.Context;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.lzy.okgo.db.DownloadManager;
 import com.lzy.okgo.model.Progress;
 import com.lzy.okserver.OkDownload;
 import com.lzy.okserver.download.DownloadTask;
@@ -19,13 +17,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
-
 import cn.com.cunw.diandubiapp.R;
 import cn.com.cunw.diandubiapp.beans.SourceBean;
 import cn.com.cunw.diandubiapp.http.DownLoadHelper;
 import cn.com.cunw.diandubiapp.interfaces.Contants;
 import cn.com.cunw.diandubiapp.interfaces.MySourceDialogListener;
+import cn.com.cunw.diandubiapp.utils.FileUtils;
 import cn.com.cunw.diandubiapp.utils.ToastUtis;
 
 /**
@@ -149,7 +146,7 @@ public class SourceItemView extends RelativeLayout {
      * 本地是否存在该文件
      */
     private void initLoaclStatus() {
-        boolean exists = exists();
+        boolean exists = FileUtils.exists(mItemBean);
         setTag(exists);
         // 本地是否存在
         if (exists) {
@@ -176,29 +173,6 @@ public class SourceItemView extends RelativeLayout {
         }
     }
 
-    private File getFile() {
-        return new File(DownLoadHelper.getInstance().getPath() + mItemBean.getFileName());
-    }
-
-    private boolean exists() {
-        File file = getFile();
-        Progress progress = DownloadManager.getInstance().get(mItemBean.id);
-        if (progress != null) {
-            if (progress.status == Progress.NONE && file.exists()) {
-                // 没有下载完成的
-                file.delete();
-                return false;
-            }
-        }
-        return file.exists();
-    }
-
-    private void deleteFile() {
-        if (exists()) {
-            getFile().delete();
-        }
-    }
-
     private void load() {
         if (mStatus == 0) {
             // 弹出 需要付费 的对话框
@@ -213,7 +187,12 @@ public class SourceItemView extends RelativeLayout {
             if (exists) {
                 ToastUtis.show("本地已存在该文件！");
             } else {
-                DownLoadHelper.getInstance().downSource(mItemBean);
+                long availableSize = FileUtils.getAvailableSize();
+                if (availableSize - mItemBean.fileSize > Contants.MAX_SD_SIZE) {
+                    DownLoadHelper.getInstance().downSource(mItemBean);
+                } else {
+                    ToastUtis.show("空间不足！");
+                }
             }
         } else {
             Progress progress = task.progress;
@@ -259,7 +238,7 @@ public class SourceItemView extends RelativeLayout {
                     if (progress.status == Progress.LOADING || progress.status == Progress.PAUSE || progress.status == Progress.FINISH) {
                         int rate = (int) (currSize * 100 / totalSize);
                         if (rate == 100) {
-                            ToastUtis.show(mItemBean.fileName + "下载完成");
+                            ToastUtis.show(mItemBean.getFileName() + "下载完成");
                             initStatusView();
                         }
                         try {
@@ -268,7 +247,7 @@ public class SourceItemView extends RelativeLayout {
                             e.printStackTrace();
                         }
                     } else if (progress.status == Progress.ERROR) {
-                        deleteFile();
+                        FileUtils.delete(mItemBean);
                         initStatusView();
                     } else {
 

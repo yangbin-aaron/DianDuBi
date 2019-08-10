@@ -20,14 +20,19 @@ public class SourceBean {
         public String verisonName;
         public String downloadUrl;
         public String resTitle;
-        public String fileName;
+        private String fileName;
         public long fileSize;
         public boolean autoDownload;
         public boolean allowFreeDownload;
         public boolean bugflag;
+        public boolean needDelete;
+
+        public void setFileName(String fileName) {
+            this.fileName = fileName;
+        }
 
         public String getFileName() {
-            return id + fileName;
+            return this.fileName;
         }
     }
 }

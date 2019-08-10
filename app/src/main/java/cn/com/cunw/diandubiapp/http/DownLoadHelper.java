@@ -1,6 +1,6 @@
 package cn.com.cunw.diandubiapp.http;
 
-import android.os.Environment;
+import android.util.Log;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.request.GetRequest;
@@ -10,6 +10,7 @@ import java.io.File;
 
 import cn.com.cunw.diandubiapp.beans.SourceBean;
 import cn.com.cunw.diandubiapp.interfaces.Contants;
+import cn.com.cunw.diandubiapp.utils.FileUtils;
 
 /**
  * @author YangBin
@@ -31,8 +32,8 @@ public class DownLoadHelper {
     private static String sPath;
 
     // 相关设置
-    public static void init() {
-        sPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/aaa/";
+    public static void init(String path) {
+        sPath = path;
         // 设置下载，保存文件的目录
         OkDownload.getInstance().setFolder(sPath);
         // 最大下载数
@@ -49,11 +50,16 @@ public class DownLoadHelper {
      * @param itemBean
      */
     public void downSource(SourceBean.ItemBean itemBean) {
-        GetRequest<File> request = OkGo.get(itemBean.downloadUrl);
-        OkDownload.request(itemBean.id, request)
-                .fileName(itemBean.getFileName()) // 文件名
-                .save()
-                .register(new LogDownloadListener())
-                .start();
+        long availableSize = FileUtils.getAvailableSize();
+        if (availableSize - itemBean.fileSize > Contants.MAX_SD_SIZE) {
+            GetRequest<File> request = OkGo.get(itemBean.downloadUrl);
+            OkDownload.request(itemBean.id, request)
+                    .fileName(itemBean.getFileName()) // 文件名
+                    .save()
+                    .register(new LogDownloadListener())
+                    .start();
+        } else {
+            Log.e("DownLoadHelper", "空间不足，剩余空间为：" + (int) (availableSize / 1024 / 1024));
+        }
     }
 }

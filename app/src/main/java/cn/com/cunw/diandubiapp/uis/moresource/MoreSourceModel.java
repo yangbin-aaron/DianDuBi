@@ -4,6 +4,7 @@ import com.lzy.okgo.OkGo;
 
 import java.util.List;
 
+import cn.com.cunw.diandubiapp.App;
 import cn.com.cunw.diandubiapp.base.mvp.BaseModel;
 import cn.com.cunw.diandubiapp.beans.Test;
 import cn.com.cunw.diandubiapp.http.BaseCallBack;
@@ -18,7 +19,7 @@ import cn.com.cunw.diandubiapp.interfaces.Contants;
 public class MoreSourceModel extends BaseModel {
 
     public void getMoreSourceList(BaseCallBack callback) {
-        String url = Contants.BASE_URL + "v1/takingpen/resources";
+        String url = App.getBaseUrl() + "v1/takingpen/resources";
         OkGo.get(url)
                 .params("accountId", "604650534976229377")
                 .execute(callback);

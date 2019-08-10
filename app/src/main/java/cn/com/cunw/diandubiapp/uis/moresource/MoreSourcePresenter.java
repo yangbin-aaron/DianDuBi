@@ -13,6 +13,8 @@ import java.util.List;
 import cn.com.cunw.diandubiapp.base.mvp.BasePresenter;
 import cn.com.cunw.diandubiapp.beans.SourceBean;
 import cn.com.cunw.diandubiapp.http.BaseCallBack;
+import cn.com.cunw.diandubiapp.interfaces.Contants;
+import cn.com.cunw.diandubiapp.utils.FileUtils;
 import cn.com.cunw.diandubiapp.utils.ToastUtis;
 
 /**
@@ -40,6 +42,8 @@ public class MoreSourcePresenter extends BasePresenter<MoreSourceModel, MoreSour
                 long totalSize = 0;
                 JSONArray jsonArray = object.optJSONArray("data");
                 List<SourceBean> list = new ArrayList<>();
+                // 可用空间
+                long availableSize = FileUtils.getAvailableSize();
                 if (jsonArray != null) {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.optJSONObject(i);
@@ -57,16 +61,29 @@ public class MoreSourcePresenter extends BasePresenter<MoreSourceModel, MoreSour
                                 itemBean.verisonName = bookJson.optString("verisonName");
                                 itemBean.downloadUrl = bookJson.optString("downloadUrl");
                                 itemBean.resTitle = bookJson.optString("resTitle");
-                                itemBean.fileName = bookJson.optString("fileName");
+                                itemBean.setFileName(bookJson.optString("fileName"));
                                 itemBean.fileSize = bookJson.optLong("fileSize");
                                 itemBean.autoDownload = bookJson.optBoolean("autoDownload");
                                 itemBean.allowFreeDownload = bookJson.optBoolean("allowFreeDownload");
                                 itemBean.bugflag = bookJson.optBoolean("bugflag");
+                                itemBean.needDelete = bookJson.optBoolean("needDelete");
                                 bookList.add(itemBean);
 
-                                if (itemBean.autoDownload && itemBean.bugflag) {
-                                    totalSize += itemBean.fileSize;
-                                    list2.add(itemBean);
+                                if (itemBean.needDelete) {
+                                    // 自动删除
+                                    boolean delete = FileUtils.delete(itemBean);
+                                    if (delete) {
+                                        availableSize += itemBean.fileSize;
+                                    }
+                                }
+
+                                if (itemBean.autoDownload && !FileUtils.exists(itemBean)) {
+                                    if (availableSize - itemBean.fileSize > Contants.MAX_SD_SIZE) {
+                                        // 空间小于最大预留时，不允许下载了
+                                        totalSize += itemBean.fileSize;
+                                        list2.add(itemBean);
+                                        availableSize -= itemBean.fileSize;
+                                    }
                                 }
                             }
                         }

@@ -1,6 +1,7 @@
 package cn.com.cunw.diandubiapp;
 
 import android.app.Application;
+import android.os.Environment;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
@@ -23,6 +24,15 @@ import okhttp3.OkHttpClient;
  * @copyright 湖南新云网科技有限公司
  */
 public class App extends Application {
+    private static String sBaseUrl = "http://192.168.11.178:7791/";
+
+    public static String getBaseUrl() {
+        return sBaseUrl;
+    }
+
+    public static void setBaseUrl(String url) {
+        sBaseUrl = url;
+    }
 
     private static App sApp;
 
@@ -38,6 +48,13 @@ public class App extends Application {
         SourceSpHelper.init(this);
 
         initOkGo();
+        initDownPath();
+    }
+
+    private String mPath = "";
+
+    private void initDownPath() {
+        mPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/aaa/";
     }
 
     private void initOkGo() {
@@ -69,6 +86,7 @@ public class App extends Application {
                 .setRetryCount(1)                               //全局统一超时重连次数，默认为三次，那么最差的情况会请求4次(一次原始请求，三次重连请求)，不需要可以设置为0
                 .addCommonHeaders(headers);                      //全局公共头
 
-        DownLoadHelper.init();
+        // 文件路径设置
+        DownLoadHelper.init(mPath);
     }
 }

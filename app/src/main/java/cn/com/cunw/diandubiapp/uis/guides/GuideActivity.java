@@ -6,28 +6,18 @@ import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 
-import com.lzy.okgo.OkGo;
 import com.lzy.okgo.model.Progress;
-import com.lzy.okgo.request.GetRequest;
-import com.lzy.okserver.OkDownload;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.io.File;
 import java.util.List;
 
 import cn.com.cunw.diandubiapp.R;
-import cn.com.cunw.diandubiapp.base.BaseActivity;
 import cn.com.cunw.diandubiapp.base.mvp.BaseMvpActivity;
 import cn.com.cunw.diandubiapp.beans.SourceBean;
 import cn.com.cunw.diandubiapp.http.DownLoadHelper;
-import cn.com.cunw.diandubiapp.http.LogDownloadListener;
 import cn.com.cunw.diandubiapp.interfaces.Contants;
-import cn.com.cunw.diandubiapp.preference.SourceSpHelper;
 import cn.com.cunw.diandubiapp.uis.main.MainActivity;
 import cn.com.cunw.diandubiapp.uis.moresource.MoreSourcePresenter;
 import cn.com.cunw.diandubiapp.uis.moresource.MoreSourceView;
-import cn.com.cunw.diandubiapp.utils.ToastUtis;
 import cn.com.cunw.diandubiapp.views.GuideProgressView;
 
 /**
@@ -83,7 +73,7 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
                     guide_pro.updateRate(rate);
                     if (rate == 100) {
                         joinMainActivity();
-                        SourceSpHelper.getInstance().saveDownLoadedStatus();
+//                        SourceSpHelper.getInstance().saveDownLoadedStatus();
                     }
                 }
                 break;

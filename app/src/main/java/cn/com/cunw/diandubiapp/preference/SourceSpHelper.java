@@ -33,10 +33,10 @@ public class SourceSpHelper {
     }
 
     public void saveDownLoadedStatus(){
-        mHelper.putBoolean("downloaded",true);
+        mHelper.putBoolean("download",true);
     }
 
     public boolean isDownLoaded(){
-        return mHelper.getBoolean("downloaded");
+        return mHelper.getBoolean("download");
     }
 }
