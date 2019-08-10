@@ -2,6 +2,7 @@ package cn.com.cunw.diandubiapp.uis.moresource;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -89,7 +90,13 @@ public class MoreSourceActivity extends BaseMvpActivity<MoreSourcePresenter> imp
     }
 
     @Override
-    public void initAutoList(List<SourceBean.ItemBean> list) {
+    public void initAutoList(List<SourceBean.ItemBean> list,long totalSize) {
+
+    }
+
+    @Override
+    public void onEventMainThread(Message message) {
+        super.onEventMainThread(message);
 
     }
 }

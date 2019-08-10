@@ -33,7 +33,7 @@ public class LogDownloadListener extends DownloadListener {
     @Override
     public void onProgress(Progress progress) {
         System.out.println("onProgress: " + progress);
-        mMessage.arg1 = (int) (progress.currentSize * 100 / progress.totalSize);
+        mMessage.obj = progress;
     }
 
     @Override

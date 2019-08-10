@@ -1,19 +1,28 @@
 package cn.com.cunw.diandubiapp.views;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import cn.com.cunw.diandubiapp.interfaces.MySourceDialogListener;
+import com.lzy.okgo.model.Progress;
+import com.lzy.okserver.OkDownload;
+import com.lzy.okserver.download.DownloadTask;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
+
 import cn.com.cunw.diandubiapp.R;
 import cn.com.cunw.diandubiapp.beans.SourceBean;
+import cn.com.cunw.diandubiapp.http.DownLoadHelper;
+import cn.com.cunw.diandubiapp.interfaces.Contants;
+import cn.com.cunw.diandubiapp.interfaces.MySourceDialogListener;
 import cn.com.cunw.diandubiapp.utils.ToastUtis;
 
 /**
@@ -42,9 +51,9 @@ public class SourceItemView extends RelativeLayout {
     private TextView tv_sub;
     private TextView tv_pro;
     private SourceProgressView progressView;
-    private int _rate = 0;
 
     private void init(Context context) {
+        EventBus.getDefault().register(mContext);
         mContext = context;
         LayoutInflater.from(context).inflate(R.layout.include_source, this);
         view_bg = findViewById(R.id.view_bg);
@@ -75,19 +84,14 @@ public class SourceItemView extends RelativeLayout {
 
     private void initStatusView() {
         mStatus = -1;
-        if (!mItemBean.allowFreeDownload) {
-            mStatus = -1;
+        if (mItemBean.allowFreeDownload) {
+            mStatus = 1;
         } else {
             if (mItemBean.bugflag) {
                 mStatus = 2;
             } else {
                 mStatus = 0;
             }
-        }
-
-        // 本地是否存在
-        if (1 == 1) {
-            mStatus = 1;
         }
 
         progressView.setVisibility(GONE);
@@ -97,14 +101,18 @@ public class SourceItemView extends RelativeLayout {
                 tv_pro.setText("付费");
                 view_bg.setBackgroundResource(R.drawable.rect_source_1);
                 break;
-            case 1:
-                initLoaclStatus();
+            case 1:// 免费
+                tv_pro.setText("");
+                tv_pro.setBackgroundResource(android.R.color.transparent);
+                view_bg.setBackgroundResource(R.drawable.rect_source_2);
                 break;
             case 2:
                 tv_pro.setText("已付费");
                 view_bg.setBackgroundResource(R.drawable.rect_source_3);
                 break;
         }
+
+        initLoaclStatus();
     }
 
     private void updateRate(float rate) {
@@ -117,31 +125,22 @@ public class SourceItemView extends RelativeLayout {
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            float rate = msg.what;
-            if (rate == 100) {
-                initLoaclStatus();
-            }
-            try {
-                updateRate(rate);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
     /**
      * 本地是否存在该文件
      */
     private void initLoaclStatus() {
-        mStatus = 1;
-        tv_pro.setText("");
-        tv_pro.setBackgroundResource(android.R.color.transparent);
-        view_bg.setBackgroundResource(R.drawable.rect_source_2);
+        boolean exists = exists();
+        // 本地是否存在
+        if (exists) {
+            // 存在
+        } else {
+            // 不存在
+        }
+    }
+
+    private boolean exists() {
+        File file = new File(DownLoadHelper.getInstance().getPath() + mItemBean.fileName);
+        return file.exists();
     }
 
     private void load() {
@@ -152,35 +151,61 @@ public class SourceItemView extends RelativeLayout {
             }
             return;
         }
-        if (sLoading) {
-            ToastUtis.show(R.string.down_loading);
+        if (exists()) {
+            ToastUtis.show("本地已存在该文件！");
             return;
         }
-        sLoading = true;
-        _rate = 0;
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                while (sLoading) {
-                    try {
-                        sleep(100);
-                        _rate++;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (_rate >= 100) {
-                        sLoading = false;
-                    }
-                    mHandler.sendEmptyMessage(_rate);
-                }
+        DownloadTask task = OkDownload.getInstance().getTask(mItemBean.id);
+        if (task == null) {
+            DownLoadHelper.getInstance().downSource(mItemBean);
+        } else {
+            Progress progress = task.progress;
+            int proStatus = progress.status;
+            if (proStatus == Progress.PAUSE || proStatus == Progress.ERROR) {
+                task.start();
+            } else if (proStatus == Progress.LOADING || proStatus == Progress.WAITING) {
+                task.pause();
             }
-        }.start();
+        }
     }
 
     private MySourceDialogListener mMySourceDialogListener;
 
     public void setMySourceDialogListener(MySourceDialogListener mySourceDialogListener) {
         mMySourceDialogListener = mySourceDialogListener;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(Message message) {
+        switch (message.what) {
+            case Contants.WHAT_REGISTER_EVENTBUG:
+                try {
+                    EventBus.getDefault().unregister(mContext);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case Contants.WHAT_GUIDE_DOWN:
+                Progress progress = (Progress) message.obj;
+                long currSize = progress.currentSize;
+                long totalSize = progress.totalSize;
+                String tag = progress.tag;
+                if (tag.equals(mItemBean.id)) {
+                    if (progress.status == Progress.LOADING || progress.status == Progress.PAUSE || progress.status == Progress.FINISH) {
+                        int rate = (int) (currSize * 100 / totalSize);
+                        if (rate == 100) {
+                            initStatusView();
+                        }
+                        try {
+                            updateRate(rate);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        initStatusView();
+                    }
+                }
+                break;
+        }
     }
 }

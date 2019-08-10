@@ -6,6 +6,7 @@ import android.os.Message;
 import android.view.View;
 
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.model.Progress;
 import com.lzy.okgo.request.GetRequest;
 import com.lzy.okserver.OkDownload;
 
@@ -18,8 +19,10 @@ import cn.com.cunw.diandubiapp.R;
 import cn.com.cunw.diandubiapp.base.BaseActivity;
 import cn.com.cunw.diandubiapp.base.mvp.BaseMvpActivity;
 import cn.com.cunw.diandubiapp.beans.SourceBean;
+import cn.com.cunw.diandubiapp.http.DownLoadHelper;
 import cn.com.cunw.diandubiapp.http.LogDownloadListener;
 import cn.com.cunw.diandubiapp.interfaces.Contants;
+import cn.com.cunw.diandubiapp.preference.SourceSpHelper;
 import cn.com.cunw.diandubiapp.uis.main.MainActivity;
 import cn.com.cunw.diandubiapp.uis.moresource.MoreSourcePresenter;
 import cn.com.cunw.diandubiapp.uis.moresource.MoreSourceView;
@@ -61,39 +64,24 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
         super.onEventMainThread(message);
         switch (message.what) {
             case Contants.WHAT_GUIDE_DOWN:
-                if (guide_pro != null) {
-                    int rate = message.arg1;
+                Progress progress = (Progress) message.obj;
+                if (guide_pro != null && progress.status != Progress.NONE && progress.status != Progress.WAITING) {
+
+                    long currSize = progress.currentSize;
+                    long totalSize = progress.totalSize;
+                    if (currSize == totalSize) {
+                        mCurrSize += currSize;
+                    }
+
+                    int rate = (int) ((currSize + mCurrSize) * 100 / mTotalSize);
                     guide_pro.updateRate(rate);
                     if (rate == 100) {
                         joinMainActivity(null);
+                        SourceSpHelper.getInstance().saveDownLoadedStatus();
                     }
                 }
                 break;
         }
-    }
-
-    public static int mI = 0;
-
-    private void load() {
-        final Message message = new Message();
-        message.what = Contants.WHAT_GUIDE_DOWN;
-        mI = 0;
-        new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                do {
-                    mI++;
-                    message.arg1 = mI;
-                    try {
-                        sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    EventBus.getDefault().post(message);
-                } while (mI < 100 && mI != -1);
-            }
-        }.start();
     }
 
     @Override
@@ -106,16 +94,15 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
 
     }
 
+    private long mCurrSize;
+    private long mTotalSize;
+
     @Override
-    public void initAutoList(List<SourceBean.ItemBean> list) {
+    public void initAutoList(List<SourceBean.ItemBean> list, long totalSize) {
+        mTotalSize = totalSize;
         // 下载
         for (SourceBean.ItemBean itemBean : list) {
-            GetRequest<File> request = OkGo.get(itemBean.downloadUrl);
-            OkDownload.request(itemBean.id, request)
-                    .fileName(itemBean.resTitle) // 文件名
-                    .save()
-                    .register(new LogDownloadListener())
-                    .start();
+            DownLoadHelper.getInstance().downSource(itemBean);
         }
     }
 }

@@ -20,6 +20,7 @@ public class SourceBean {
         public String verisonName;
         public String downloadUrl;
         public String resTitle;
+        public String fileName;
         public long fileSize;
         public boolean autoDownload;
         public boolean allowFreeDownload;

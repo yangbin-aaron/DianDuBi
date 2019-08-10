@@ -8,4 +8,5 @@ package cn.com.cunw.diandubiapp.interfaces;
  */
 public interface Contants {
     int WHAT_GUIDE_DOWN = 10000;
+    int WHAT_REGISTER_EVENTBUG = 10001;
 }

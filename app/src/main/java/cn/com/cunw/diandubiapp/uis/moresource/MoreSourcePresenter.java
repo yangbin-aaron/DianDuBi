@@ -2,6 +2,8 @@ package cn.com.cunw.diandubiapp.uis.moresource;
 
 import android.content.Context;
 
+import com.lzy.okgo.model.Response;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,6 +13,7 @@ import java.util.List;
 import cn.com.cunw.diandubiapp.base.mvp.BasePresenter;
 import cn.com.cunw.diandubiapp.beans.SourceBean;
 import cn.com.cunw.diandubiapp.http.BaseCallBack;
+import cn.com.cunw.diandubiapp.utils.ToastUtis;
 
 /**
  * @author YangBin
@@ -34,6 +37,7 @@ public class MoreSourcePresenter extends BasePresenter<MoreSourceModel, MoreSour
             @Override
             public void onSuccess(JSONObject object) {
                 List<SourceBean.ItemBean> list2 = new ArrayList<>();
+                long totalSize = 0;
                 JSONArray jsonArray = object.optJSONArray("data");
                 List<SourceBean> list = new ArrayList<>();
                 if (jsonArray != null) {
@@ -53,6 +57,7 @@ public class MoreSourcePresenter extends BasePresenter<MoreSourceModel, MoreSour
                                 itemBean.verisonName = bookJson.optString("verisonName");
                                 itemBean.downloadUrl = bookJson.optString("downloadUrl");
                                 itemBean.resTitle = bookJson.optString("resTitle");
+                                itemBean.fileName = bookJson.optString("fileName");
                                 itemBean.fileSize = bookJson.optLong("fileSize");
                                 itemBean.autoDownload = bookJson.optBoolean("autoDownload");
                                 itemBean.allowFreeDownload = bookJson.optBoolean("allowFreeDownload");
@@ -60,6 +65,7 @@ public class MoreSourcePresenter extends BasePresenter<MoreSourceModel, MoreSour
                                 bookList.add(itemBean);
 
                                 if (itemBean.autoDownload && itemBean.bugflag) {
+                                    totalSize += itemBean.fileSize;
                                     list2.add(itemBean);
                                 }
                             }
@@ -70,7 +76,13 @@ public class MoreSourcePresenter extends BasePresenter<MoreSourceModel, MoreSour
                 }
 
                 mView.initList(list);
-                mView.initAutoList(list2);
+                mView.initAutoList(list2, totalSize);
+            }
+
+            @Override
+            public void onError(int code, String message) {
+                super.onError(code, message);
+                ToastUtis.show(message);
             }
         });
     }

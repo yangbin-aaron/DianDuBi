@@ -44,19 +44,25 @@ public abstract class BaseCallBack<T> implements Callback<T> {
     @Override
     public void onSuccess(Response<T> response) {
         int code = response.code();
+        String message = response.message();
         JSONObject object = null;
         try {
             object = new JSONObject(mJson);
             code = object.optInt("code");
+            message = object.optString("message");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (code == 0 || code == 200) {
+        if (code == 0) {
             onSuccess(object);
         } else {
-            onError(response);
+            onError(code, message);
         }
+    }
+
+    public void onError(int code, String message) {
+
     }
 
     public abstract void onSuccess(JSONObject object);
@@ -68,7 +74,7 @@ public abstract class BaseCallBack<T> implements Callback<T> {
 
     @Override
     public void onError(Response<T> response) {
-
+        onError(response.code(), response.message());
     }
 
     @Override

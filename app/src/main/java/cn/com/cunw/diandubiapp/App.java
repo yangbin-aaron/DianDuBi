@@ -1,20 +1,17 @@
 package cn.com.cunw.diandubiapp;
 
 import android.app.Application;
-import android.os.Environment;
 
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
-import com.lzy.okgo.cookie.CookieJarImpl;
-import com.lzy.okgo.cookie.store.DBCookieStore;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 import com.lzy.okgo.model.HttpHeaders;
-import com.lzy.okserver.OkDownload;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+import cn.com.cunw.diandubiapp.http.DownLoadHelper;
 import cn.com.cunw.diandubiapp.preference.SourceSpHelper;
 import cn.com.cunw.diandubiapp.utils.ToastUtis;
 import okhttp3.OkHttpClient;
@@ -45,12 +42,11 @@ public class App extends Application {
 
     private void initOkGo() {
         HttpHeaders headers = new HttpHeaders();
-        headers.put("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJqd3QiLCJpYXQiOjE1NjUzNDk2MzcsInN1YiI6IntcImlkXCI6XCI2MDQ2ODYxNDMxMTU2Mjg1NDVcIixcImFjY291bnRcIjpcIk9SRzAwMDAzM1Rlc3QzM1wiLFwiYXBwQ29kZVwiOlwiQTA2XCJ9IiwiaXNzIjoiY3VudyIsImV4cCI6MTU2NTM1NjgzN30.j01m9K1Kdelr6CKmLI7kqwIgnKUt8-kvaAg-J068Gyw");    //header不支持中文，不允许有特殊字符
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         //log相关
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor("OkGo");
-        loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BASIC);        //log打印级别，决定了log显示的详细程度
+        loggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);        //log打印级别，决定了log显示的详细程度
         loggingInterceptor.setColorLevel(Level.INFO);                               //log颜色级别，决定了log在控制台显示的颜色
         builder.addInterceptor(loggingInterceptor);                                 //添加OkGo默认debug日志
 
@@ -71,9 +67,6 @@ public class App extends Application {
                 .setRetryCount(1)                               //全局统一超时重连次数，默认为三次，那么最差的情况会请求4次(一次原始请求，三次重连请求)，不需要可以设置为0
                 .addCommonHeaders(headers);                      //全局公共头
 
-        // 设置下载，保存文件的目录
-        OkDownload.getInstance().setFolder(Environment.getExternalStorageDirectory().getAbsolutePath() + "/aaa/");
-        // 最大下载数
-        OkDownload.getInstance().getThreadPool().setCorePoolSize(3);
+        DownLoadHelper.init();
     }
 }
