@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/dp_10"
+    android:paddingTop="@dimen/dp_10"
+    android:paddingBottom="@dimen/dp_10">
+
+    <RelativeLayout
+        android:id="@+id/view_bg"
+        android:layout_width="80dp"
+        android:layout_height="100dp"
+        android:background="@drawable/rect_source_1">
+
+        <cn.com.cunw.diandubiapp.views.SourceProgressView
+            android:id="@+id/progressView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="语文"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="4dp"
+            android:text="（湘教版）"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_pro"
+            android:layout_width="74dp"
+            android:layout_height="35dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/ic_source_status_bg"
+            android:gravity="center_horizontal"
+            android:paddingTop="2dp"
+            android:text="付费"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

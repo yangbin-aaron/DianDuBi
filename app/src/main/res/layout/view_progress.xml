@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_pro_bg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_progress_bg" />
+
+    <View
+        android:id="@+id/view_pro"
+        android:layout_width="0dp"
+        android:layout_height="14.5dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="26.5dp"
+        android:layout_marginRight="22dp"
+        android:background="@drawable/rect_8_blue"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/iv_pro_s"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/ic_progress_s" />
+
+    <TextView
+        android:id="@+id/tv_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_pro_s"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"
+        android:text="正在加载中30%"
+        android:textColor="@color/black" />
+
+</RelativeLayout>
