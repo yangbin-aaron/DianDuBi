@@ -43,11 +43,15 @@ public class LogDownloadListener extends DownloadListener {
     public void onError(Progress progress) {
         System.out.println("onError: " + progress);
         progress.exception.printStackTrace();
+        mMessage.obj = progress;
+        EventBus.getDefault().post(mMessage);
     }
 
     @Override
     public void onFinish(File file, Progress progress) {
         System.out.println("onFinish: " + progress);
+        mMessage.obj = progress;
+        EventBus.getDefault().post(mMessage);
     }
 
     @Override

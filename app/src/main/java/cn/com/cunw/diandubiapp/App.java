@@ -47,8 +47,8 @@ public class App extends Application {
         ToastUtis.init(this);
         SourceSpHelper.init(this);
 
-        initOkGo();
         initDownPath();
+        initOkGo();
     }
 
     private String mPath = "";
@@ -59,7 +59,7 @@ public class App extends Application {
 
     private void initOkGo() {
         HttpHeaders headers = new HttpHeaders();
-        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJqd3QiLCJpYXQiOjE1NjU0MTUyODAsInN1YiI6IntcImlkXCI6XCI2MDQ2ODYxNDMwNDQzMjUzNzdcIixcImFjY291bnRcIjpcIk9SRzAwMDAzM1Rlc3QzMVwiLFwiYXBwQ29kZVwiOlwiQTA1XCJ9IiwiaXNzIjoiY3VudyIsImV4cCI6MTU2NTQyMjQ4MH0._hvJkArlfy76Vfq0AzlToVUQ8Xjt7UXwmeD2BiopTkA";
+        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJqd3QiLCJpYXQiOjE1NjU0MjExNzEsInN1YiI6IntcImlkXCI6XCI2MDc1OTg2OTA4OTAyODkxNTJcIixcImFjY291bnRcIjpcIk9SRzAwMDAzM1Rlc3Q1MlwiLFwiYXBwQ29kZVwiOlwiQTA2XCJ9IiwiaXNzIjoiY3VudyIsImV4cCI6MTU2NTQyODM3MX0.CrpN7ygClHTP0s59hL0aprOAR4UZV2eXYSTlT4H66Qw";
         headers.put("Authorization", token);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();

@@ -119,9 +119,11 @@ public class SourceItemView extends RelativeLayout {
             DownloadTask task = OkDownload.getInstance().getTask(mItemBean.id);
             if (task != null) {
                 status = task.progress.status;
-                int rate = (int) (task.progress.currentSize * 100 / task.progress.totalSize);
-                if (rate < 100) {
-                    updateRate(rate);
+                if (status == Progress.PAUSE || status == Progress.WAITING || status == Progress.LOADING) {
+                    int rate = (int) (task.progress.currentSize * 100 / task.progress.totalSize);
+                    if (rate < 100) {
+                        updateRate(rate);
+                    }
                 }
             }
         } catch (Exception e) {

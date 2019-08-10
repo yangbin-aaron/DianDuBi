@@ -1,10 +1,16 @@
 package cn.com.cunw.diandubiapp.uis.guides;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.lzy.okgo.model.Progress;
 
@@ -18,6 +24,7 @@ import cn.com.cunw.diandubiapp.interfaces.Contants;
 import cn.com.cunw.diandubiapp.uis.main.MainActivity;
 import cn.com.cunw.diandubiapp.uis.moresource.MoreSourcePresenter;
 import cn.com.cunw.diandubiapp.uis.moresource.MoreSourceView;
+import cn.com.cunw.diandubiapp.utils.ToastUtis;
 import cn.com.cunw.diandubiapp.views.GuideProgressView;
 
 /**
@@ -43,11 +50,11 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
     @Override
     public void initViews() {
         super.initViews();
+        verifyStoragePermissions(this);
         mButton = findViewById(R.id.btn);
         mButton.setVisibility(View.INVISIBLE);
         mButton.setOnClickListener(this);
         guide_pro = findViewById(R.id.guide_pro);
-        mPresenter.getMoreSourceList();
     }
 
     private void joinMainActivity() {
@@ -73,7 +80,7 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
                     guide_pro.updateRate(rate);
                     if (rate == 100) {
                         joinMainActivity();
-//                        SourceSpHelper.getInstance().saveDownLoadedStatus();
+                        //                        SourceSpHelper.getInstance().saveDownLoadedStatus();
                     }
                 }
                 break;
@@ -120,5 +127,48 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
     @Override
     public void onClick(View v) {
         joinMainActivity();
+    }
+
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE"};
+
+
+    private void verifyStoragePermissions(Activity activity) {
+        try {
+            //检测是否有写的权限
+            int permission = ActivityCompat.checkSelfPermission(activity, PERMISSIONS_STORAGE[1]);
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                Log.e("permission", "未授权");
+                // 没有写的权限，去申请写的权限，会弹出对话框
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+            } else {
+                Log.e("permission", "已授权");
+                mPresenter.getMoreSourceList();
+            }
+        } catch (Exception e) {
+            Log.e("permission", " ---- " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { //同意权限申请
+                    Log.e("permission", "授权成功！");
+                    mPresenter.getMoreSourceList();
+                } else { //拒绝权限申请
+                    ToastUtis.show("权限被拒绝了！");
+                    finish();
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
