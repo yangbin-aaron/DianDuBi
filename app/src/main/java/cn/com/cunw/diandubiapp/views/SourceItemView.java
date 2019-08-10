@@ -45,7 +45,6 @@ public class SourceItemView extends RelativeLayout {
         init(context);
     }
 
-    private Context mContext;
     private View view_bg;
     private TextView tv_name;
     private TextView tv_sub;
@@ -55,7 +54,6 @@ public class SourceItemView extends RelativeLayout {
 
     private void init(Context context) {
         EventBus.getDefault().register(this);
-        mContext = context;
         LayoutInflater.from(context).inflate(R.layout.include_source, this);
         view_bg = findViewById(R.id.view_bg);
         tv_name = findViewById(R.id.tv_name);

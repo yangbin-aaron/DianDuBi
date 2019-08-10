@@ -6,11 +6,6 @@ import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-
-import com.lzy.okgo.db.DownloadManager;
-import com.lzy.okgo.model.Progress;
-import com.lzy.okserver.OkDownload;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -56,12 +51,6 @@ public class MoreSourceActivity extends BaseMvpActivity<MoreSourcePresenter> imp
     @Override
     public void initViews() {
         super.initViews();
-
-        List<Progress> processes = DownloadManager.getInstance().getAll();
-        for (Progress pro : processes) {
-            Log.e(pro.tag + "   ---》》 ", pro.status + " - " + pro.fileName + "\ntask是否存在：" + (OkDownload.getInstance().getTask(pro.tag) != null));
-        }
-
         mSwipeRefreshLayout = findViewById(R.id.srl_source);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 

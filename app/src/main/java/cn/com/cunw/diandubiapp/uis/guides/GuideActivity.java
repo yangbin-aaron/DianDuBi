@@ -7,10 +7,8 @@ import android.content.pm.PackageManager;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.lzy.okgo.model.Progress;
 
@@ -141,15 +139,12 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
             //检测是否有写的权限
             int permission = ActivityCompat.checkSelfPermission(activity, PERMISSIONS_STORAGE[1]);
             if (permission != PackageManager.PERMISSION_GRANTED) {
-                Log.e("permission", "未授权");
                 // 没有写的权限，去申请写的权限，会弹出对话框
                 ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
             } else {
-                Log.e("permission", "已授权");
                 mPresenter.getMoreSourceList();
             }
         } catch (Exception e) {
-            Log.e("permission", " ---- " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -160,7 +155,6 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { //同意权限申请
-                    Log.e("permission", "授权成功！");
                     mPresenter.getMoreSourceList();
                 } else { //拒绝权限申请
                     ToastUtis.show("权限被拒绝了！");
