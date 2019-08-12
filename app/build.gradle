@@ -3,17 +3,24 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "cn.com.cunw.diandubiapp"
+        applicationId "com.xyweducation.diandubiapp"
         minSdkVersion rootProject.ext.appMinSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 100
+        versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def fileName = "DDB-app" + "_V${defaultConfig.versionName}_C${defaultConfig.versionCode}.apk"
+            outputFileName = fileName
         }
     }
 }
