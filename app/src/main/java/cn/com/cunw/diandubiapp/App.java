@@ -25,7 +25,7 @@ import okhttp3.OkHttpClient;
  * @copyright 湖南新云网科技有限公司
  */
 public class App extends Application {
-    private static String sBaseUrl = "http://192.168.11.178:7791/";
+    private static String sBaseUrl = "http://test.cunwedu.com.cn/v1";
 
     public static String getBaseUrl() {
         return sBaseUrl;

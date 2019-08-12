@@ -10,7 +10,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 
-import cn.com.cunw.diandubiapp.App;
 import cn.com.cunw.diandubiapp.interfaces.Contants;
 import cn.com.cunw.diandubiapp.utils.DataUtils;
 
@@ -59,6 +58,8 @@ public class LogDownloadListener extends DownloadListener {
                 // 刷新Token
                 DataUtils.sendBroad("down_" + progress.tag);
             }
+        } else {
+            Log.e("down", "code = " + message);
         }
     }
 

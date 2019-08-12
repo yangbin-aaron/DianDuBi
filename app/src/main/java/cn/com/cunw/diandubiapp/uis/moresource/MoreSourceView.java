@@ -16,5 +16,5 @@ public interface MoreSourceView extends BaseView {
 
     void initAutoList(List<SourceBean.ItemBean> list, long totalSize);
 
-    void onError(String message);
+    void onError(int code, String message);
 }

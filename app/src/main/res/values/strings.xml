@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DianDuBiApp</string>
+    <string name="app_name">点读笔</string>
 
     <string name="no_net">请检查网络连接！</string>
     <string name="down_loading">有任务正在下载，请稍等！</string>

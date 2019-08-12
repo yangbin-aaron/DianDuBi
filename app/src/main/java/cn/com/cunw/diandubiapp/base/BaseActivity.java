@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-
-import com.lzy.okserver.OkDownload;
-import com.lzy.okserver.download.DownloadTask;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,6 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             DataUtils.initData(BaseActivity.this);
             String tag = intent.getStringExtra("tag");
+            Log.e("aaron", "收到广播 tag = " + tag);
             switch (tag) {
                 case "token":
                     // 只刷新Token，不做其他操作

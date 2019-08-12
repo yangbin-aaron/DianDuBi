@@ -259,8 +259,8 @@ public class DownloadTask implements Runnable {
         if (code == 200) {
             try {
                 JSONObject object = new JSONObject(new String(body.bytes()));
-                if (object.optInt("code") == 480) {
-                    postOnError(progress, new HttpException("480"));
+                if (object.optInt("code") != 0) {
+                    postOnError(progress, new HttpException(String.valueOf(code)));
                     return;
                 }
             } catch (Exception e) {

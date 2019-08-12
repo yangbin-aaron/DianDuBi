@@ -115,9 +115,11 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
     }
 
     @Override
-    public void onError(String message) {
+    public void onError(int code, String message) {
         // 刷新Token
-        DataUtils.sendBroad("token");
+        if (code == 480) {
+            DataUtils.sendBroad("token");
+        }
         joinMainActivity();
     }
 
