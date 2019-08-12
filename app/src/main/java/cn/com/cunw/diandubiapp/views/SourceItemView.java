@@ -189,7 +189,7 @@ public class SourceItemView extends RelativeLayout {
             } else {
                 long availableSize = FileUtils.getAvailableSize();
                 if (availableSize - mItemBean.fileSize > Contants.MAX_SD_SIZE) {
-                    DownLoadHelper.getInstance().downSource(mItemBean);
+                    DownLoadHelper.getInstance().downSource(mItemBean, true);
                 } else {
                     ToastUtis.show("空间不足！");
                 }

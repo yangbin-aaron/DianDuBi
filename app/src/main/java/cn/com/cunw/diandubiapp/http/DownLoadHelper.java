@@ -8,8 +8,10 @@ import com.lzy.okserver.OkDownload;
 
 import java.io.File;
 
+import cn.com.cunw.diandubiapp.base.BaseActivity;
 import cn.com.cunw.diandubiapp.beans.SourceBean;
 import cn.com.cunw.diandubiapp.interfaces.Contants;
+import cn.com.cunw.diandubiapp.preference.SourceSpHelper;
 import cn.com.cunw.diandubiapp.utils.FileUtils;
 
 /**
@@ -49,14 +51,17 @@ public class DownLoadHelper {
      *
      * @param itemBean
      */
-    public void downSource(SourceBean.ItemBean itemBean) {
+    public void downSource(SourceBean.ItemBean itemBean, boolean h) {
+        BaseActivity.sItemBean = itemBean;
         long availableSize = FileUtils.getAvailableSize();
         if (availableSize - itemBean.fileSize > Contants.MAX_SD_SIZE) {
+            String token = SourceSpHelper.getInstance().getToken();
             GetRequest<File> request = OkGo.get(itemBean.downloadUrl);
+            request.headers("Authorization", token);
             OkDownload.request(itemBean.id, request)
                     .fileName(itemBean.getFileName()) // 文件名
                     .save()
-                    .register(new LogDownloadListener())
+                    .register(new LogDownloadListener(h))
                     .start();
         } else {
             Log.e("DownLoadHelper", "空间不足，剩余空间为：" + (int) (availableSize / 1024 / 1024));

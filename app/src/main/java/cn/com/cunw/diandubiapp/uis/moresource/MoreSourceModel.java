@@ -9,6 +9,7 @@ import cn.com.cunw.diandubiapp.base.mvp.BaseModel;
 import cn.com.cunw.diandubiapp.beans.Test;
 import cn.com.cunw.diandubiapp.http.BaseCallBack;
 import cn.com.cunw.diandubiapp.interfaces.Contants;
+import cn.com.cunw.diandubiapp.preference.SourceSpHelper;
 
 /**
  * @author YangBin
@@ -20,7 +21,9 @@ public class MoreSourceModel extends BaseModel {
 
     public void getMoreSourceList(BaseCallBack callback) {
         String url = App.getBaseUrl() + "v1/takingpen/resources";
+        String token = SourceSpHelper.getInstance().getToken();
         OkGo.get(url)
+                .headers("Authorization", token)
                 .params("accountId", "604650534976229377")
                 .execute(callback);
     }

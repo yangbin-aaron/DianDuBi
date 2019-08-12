@@ -14,6 +14,7 @@ import java.util.logging.Level;
 
 import cn.com.cunw.diandubiapp.http.DownLoadHelper;
 import cn.com.cunw.diandubiapp.preference.SourceSpHelper;
+import cn.com.cunw.diandubiapp.utils.DataUtils;
 import cn.com.cunw.diandubiapp.utils.ToastUtis;
 import okhttp3.OkHttpClient;
 
@@ -47,6 +48,8 @@ public class App extends Application {
         ToastUtis.init(this);
         SourceSpHelper.init(this);
 
+        DataUtils.initData(this);
+
         initDownPath();
         initOkGo();
     }
@@ -59,8 +62,6 @@ public class App extends Application {
 
     private void initOkGo() {
         HttpHeaders headers = new HttpHeaders();
-        String token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJqd3QiLCJpYXQiOjE1NjU0MjExNzEsInN1YiI6IntcImlkXCI6XCI2MDc1OTg2OTA4OTAyODkxNTJcIixcImFjY291bnRcIjpcIk9SRzAwMDAzM1Rlc3Q1MlwiLFwiYXBwQ29kZVwiOlwiQTA2XCJ9IiwiaXNzIjoiY3VudyIsImV4cCI6MTU2NTQyODM3MX0.CrpN7ygClHTP0s59hL0aprOAR4UZV2eXYSTlT4H66Qw";
-        headers.put("Authorization", token);
 
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         //log相关

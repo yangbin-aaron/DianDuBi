@@ -17,6 +17,7 @@ import cn.com.cunw.diandubiapp.beans.SourceBean;
 import cn.com.cunw.diandubiapp.dialogs.SourceDialog;
 import cn.com.cunw.diandubiapp.interfaces.Contants;
 import cn.com.cunw.diandubiapp.interfaces.MySourceDialogListener;
+import cn.com.cunw.diandubiapp.utils.DataUtils;
 import cn.com.cunw.diandubiapp.utils.NetworkUtil;
 import cn.com.cunw.diandubiapp.utils.ToastUtis;
 
@@ -99,6 +100,8 @@ public class MoreSourceActivity extends BaseMvpActivity<MoreSourcePresenter> imp
     public void onError(String message) {
         ToastUtis.show(message);
         mSwipeRefreshLayout.setRefreshing(false);
+        // 刷新Token
+        DataUtils.sendBroad("api");
     }
 
     @Override
@@ -107,5 +110,11 @@ public class MoreSourceActivity extends BaseMvpActivity<MoreSourcePresenter> imp
         Message message = new Message();
         message.what = Contants.WHAT_REGISTER_EVENTBUG;
         EventBus.getDefault().post(message);
+    }
+
+    @Override
+    public void refreshApi() {
+        super.refreshApi();
+        load();
     }
 }

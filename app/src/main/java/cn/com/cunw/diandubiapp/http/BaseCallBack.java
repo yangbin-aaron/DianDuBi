@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import cn.com.cunw.diandubiapp.utils.ToastUtis;
 import okhttp3.ResponseBody;
 
 /**
@@ -57,12 +58,21 @@ public abstract class BaseCallBack<T> implements Callback<T> {
         if (code == 0) {
             onSuccess(object);
         } else {
-            onError(code, message);
+            doError(code, message);
         }
     }
 
-    public void onError(int code, String message) {
+    private void doError(int code, String message) {
+        if (code == -1) {
+            ToastUtis.show("服务器连接异常！");
+        } else if (code == 480) {
+            Log.e("BaseCallBack", "Token过期！");
+        }
+        onError(code, message);
+    }
 
+    public void onError(int code, String message) {
+        Log.e("BaseCallBack", "code = " + code + " ；message = " + message);
     }
 
     public abstract void onSuccess(JSONObject object);
@@ -85,7 +95,7 @@ public abstract class BaseCallBack<T> implements Callback<T> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        onError(code, message);
+        doError(code, message);
     }
 
     @Override

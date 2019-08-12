@@ -11,4 +11,10 @@ public interface Contants {
     int WHAT_REGISTER_EVENTBUG = 10001;
 
     long MAX_SD_SIZE = 500 * 1024 * 1024;
+
+    //刷新token广播
+    String REFRESH_TOKEN = "com.cunw.broadcast.REFRESH_TOKEN";
+    //token 刷新成功广播
+    String REFRESH_TOKEN_SUCCESS = "com.cunw.broadcast.REFRESH_TOKEN_SUCCESS";
+
 }

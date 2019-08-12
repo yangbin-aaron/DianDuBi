@@ -30,5 +30,6 @@ dependencies {
     implementation "org.greenrobot:eventbus:3.0.0"
 
     // 网络框架
-    api 'com.lzy.net:okserver:2.0.5'
+//    api 'com.lzy.net:okserver:2.0.5'
+    implementation project(':okserver')
 }

@@ -22,6 +22,7 @@ import cn.com.cunw.diandubiapp.interfaces.Contants;
 import cn.com.cunw.diandubiapp.uis.main.MainActivity;
 import cn.com.cunw.diandubiapp.uis.moresource.MoreSourcePresenter;
 import cn.com.cunw.diandubiapp.uis.moresource.MoreSourceView;
+import cn.com.cunw.diandubiapp.utils.DataUtils;
 import cn.com.cunw.diandubiapp.utils.ToastUtis;
 import cn.com.cunw.diandubiapp.views.GuideProgressView;
 
@@ -109,12 +110,14 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
         mTotalSize = totalSize;
         // 下载
         for (SourceBean.ItemBean itemBean : list) {
-            DownLoadHelper.getInstance().downSource(itemBean);
+            DownLoadHelper.getInstance().downSource(itemBean, false);
         }
     }
 
     @Override
     public void onError(String message) {
+        // 刷新Token
+        DataUtils.sendBroad("token");
         joinMainActivity();
     }
 

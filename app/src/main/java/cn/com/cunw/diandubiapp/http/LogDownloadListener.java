@@ -1,6 +1,7 @@
 package cn.com.cunw.diandubiapp.http;
 
 import android.os.Message;
+import android.util.Log;
 
 import com.lzy.okgo.model.Progress;
 import com.lzy.okserver.download.DownloadListener;
@@ -9,7 +10,9 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 
+import cn.com.cunw.diandubiapp.App;
 import cn.com.cunw.diandubiapp.interfaces.Contants;
+import cn.com.cunw.diandubiapp.utils.DataUtils;
 
 /**
  * @author YangBin
@@ -21,8 +24,12 @@ public class LogDownloadListener extends DownloadListener {
 
     private Message mMessage;
 
-    public LogDownloadListener() {
+    // 第一次进来的时候，自动下载不刷新token，如果下载失败，用户手动去下载即可
+    private boolean mHandlerToken;
+
+    public LogDownloadListener(boolean handlerToken) {
         super("LogDownloadListener");
+        mHandlerToken = handlerToken;
         mMessage = new Message();
         mMessage.what = Contants.WHAT_GUIDE_DOWN;
     }
@@ -45,6 +52,14 @@ public class LogDownloadListener extends DownloadListener {
         progress.exception.printStackTrace();
         mMessage.obj = progress;
         EventBus.getDefault().post(mMessage);
+        String message = progress.exception.getMessage();
+        if ("480".equals(message)) {
+            Log.e("down", "Token过期!");
+            if (mHandlerToken) {
+                // 刷新Token
+                DataUtils.sendBroad("down_" + progress.tag);
+            }
+        }
     }
 
     @Override

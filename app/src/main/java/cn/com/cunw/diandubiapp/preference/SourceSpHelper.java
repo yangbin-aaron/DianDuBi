@@ -32,11 +32,19 @@ public class SourceSpHelper {
         mHelper = new SharedPreferencesHelper(context, SOURCE_INFO);
     }
 
-    public void saveDownLoadedStatus(){
-        mHelper.putBoolean("download",true);
+    public void saveDownLoadedStatus() {
+        mHelper.putBoolean("download", true);
     }
 
-    public boolean isDownLoaded(){
+    public boolean isDownLoaded() {
         return mHelper.getBoolean("download");
+    }
+
+    public void saveToken(String token) {
+        mHelper.putString("token", token);
+    }
+
+    public String getToken() {
+        return mHelper.getString("token");
     }
 }
