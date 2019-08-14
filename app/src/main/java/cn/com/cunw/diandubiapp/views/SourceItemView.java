@@ -247,8 +247,10 @@ public class SourceItemView extends RelativeLayout {
                             e.printStackTrace();
                         }
                     } else if (progress.status == Progress.ERROR) {
-                        FileUtils.delete(mItemBean);
-                        initStatusView();
+//                        if ("500".equals(progress.exception.getMessage())) {
+//                            FileUtils.delete(mItemBean);
+//                            initStatusView();
+//                        }
                     } else {
 
                     }

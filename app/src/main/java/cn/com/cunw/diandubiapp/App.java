@@ -25,16 +25,6 @@ import okhttp3.OkHttpClient;
  * @copyright 湖南新云网科技有限公司
  */
 public class App extends Application {
-    private static String sBaseUrl = "http://test.cunwedu.com.cn/v1";
-
-    public static String getBaseUrl() {
-        return sBaseUrl;
-    }
-
-    public static void setBaseUrl(String url) {
-        sBaseUrl = url;
-    }
-
     private static App sApp;
 
     public static App getInstance() {
@@ -49,6 +39,9 @@ public class App extends Application {
         SourceSpHelper.init(this);
 
         DataUtils.initData(this);
+//        SourceSpHelper.getInstance().saveToken("Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJqd3QiLCJpYXQiOjE1NjU1OTM1NzEsInN1YiI6IntcImlkXCI6XCI2MDc1OTg2OTA4OTAyODkxNTJcIixcImFjY291bnRcIjpcIk9SRzAwMDAzM1Rlc3Q1MlwiLFwiYXBwQ29kZVwiOlwiQTA2XCJ9IiwiaXNzIjoiY3VudyIsImV4cCI6MTU2NTYwMDc3MX0.u5zWHxMKBaaFSF9r9-y0fsTqXgC5dFOhiLj8ozH74I0");
+//        SourceSpHelper.getInstance().saveAccountId("604650534976229377");
+//        SourceSpHelper.getInstance().saveUrl("http://test.cunwedu.com.cn/v1/");
 
         initDownPath();
         initOkGo();
@@ -57,7 +50,7 @@ public class App extends Application {
     private String mPath = "";
 
     private void initDownPath() {
-        mPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/aaa/";
+        mPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.datas/";
     }
 
     private void initOkGo() {

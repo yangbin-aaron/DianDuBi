@@ -12,6 +12,7 @@ import java.io.File;
 
 import cn.com.cunw.diandubiapp.interfaces.Contants;
 import cn.com.cunw.diandubiapp.utils.DataUtils;
+import cn.com.cunw.diandubiapp.utils.ToastUtis;
 
 /**
  * @author YangBin
@@ -59,6 +60,7 @@ public class LogDownloadListener extends DownloadListener {
                 DataUtils.sendBroad("down_" + progress.tag);
             }
         } else {
+            ToastUtis.show("访问异常！");
             Log.e("down", "code = " + message);
         }
     }

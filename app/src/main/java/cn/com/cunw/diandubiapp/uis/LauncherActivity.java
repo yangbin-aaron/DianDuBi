@@ -21,9 +21,7 @@ public class LauncherActivity extends BaseActivity {
     @Override
     public void initViews() {
         super.initViews();
-        boolean isDownloaded = SourceSpHelper.getInstance().isDownLoaded();
-
-        if (isDownloaded || !NetworkUtil.isNetworkAvailable(this)) {
+        if (!NetworkUtil.isNetworkAvailable(this)) {
             MainActivity.startActivity(this);
         } else {
             GuideActivity.startActivity(this);

@@ -25,30 +25,35 @@ public class DataUtils {
         String AUTHORITY = "com.xywschoolcard.provider";
         Uri uri = Uri.parse("content://" + AUTHORITY + "/User");
         String token = "", url = "", version = "";
+        String studentId = "";
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
         if (cursor != null) {
             Log.e(TAG, "initData   size = " + cursor.getCount());
+            String _catch = "";
             while (cursor.moveToNext()) {
                 try {
                     Log.e("xyw", "count====" + cursor.getCount());
+                    _catch = "try_ ";
                     token = cursor.getString(cursor.getColumnIndex("accessToken"));
                     url = cursor.getString(cursor.getColumnIndex("url"));
                     version = cursor.getString(cursor.getColumnIndex("version"));
-                    Log.e(TAG, "initData   token " + token);
-                    Log.e(TAG, "initData   url " + url);
-                    Log.e(TAG, "initData   version " + version);
+                    studentId = cursor.getString(cursor.getColumnIndex("studentId"));
                 } catch (Exception e) {
                     Log.e("xyw", cursor.getColumnIndex("ACCESS_TOKEN") + "=count====" + cursor.getCount());
+                    _catch = "catch_ ";
                     token = cursor.getString(cursor.getColumnIndex("ACCESS_TOKEN"));
                     url = cursor.getString(cursor.getColumnIndex("URL"));
                     version = cursor.getString(cursor.getColumnIndex("VERSION"));
-                    Log.e(TAG, "11initData   token " + token);
-                    Log.e(TAG, "11initData   url " + url);
-                    Log.e(TAG, "11initData   version " + version);
+                    studentId = cursor.getString(cursor.getColumnIndex("STUDENT_ID"));
                 }
             }
+            Log.e(TAG, _catch + "initData   token = " + token);
+            Log.e(TAG, _catch + "initData   url = " + url);
+            Log.e(TAG, _catch + "initData   version = " + version);
+            Log.e(TAG, _catch + "initData   studentId = " + studentId);
             SourceSpHelper.getInstance().saveToken("Bearer " + token);
-            App.setBaseUrl(url + "/" + version + "/");
+            SourceSpHelper.getInstance().saveAccountId(studentId);
+            SourceSpHelper.getInstance().saveUrl(url + "/" + version + "/");
             cursor.close();
         }
     }

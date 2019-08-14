@@ -32,19 +32,27 @@ public class SourceSpHelper {
         mHelper = new SharedPreferencesHelper(context, SOURCE_INFO);
     }
 
-    public void saveDownLoadedStatus() {
-        mHelper.putBoolean("download", true);
-    }
-
-    public boolean isDownLoaded() {
-        return mHelper.getBoolean("download");
-    }
-
     public void saveToken(String token) {
         mHelper.putString("token", token);
     }
 
     public String getToken() {
         return mHelper.getString("token");
+    }
+
+    public void saveAccountId(String id) {
+        mHelper.putString("id", id);
+    }
+
+    public String getAccountId() {
+        return mHelper.getString("id");
+    }
+
+    public void saveUrl(String url) {
+        mHelper.putString("url", url);
+    }
+
+    public String getUrl() {
+        return mHelper.getString("url");
     }
 }
