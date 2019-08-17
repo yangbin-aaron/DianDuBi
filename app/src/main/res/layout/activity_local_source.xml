@@ -1,15 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#056888">
 
     <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="点读笔"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+    <RelativeLayout
+        android:id="@+id/rl_space"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title">
+
+        <!--进度 用你自己的自定义进度即可-->
+        <View
+            android:id="@+id/myProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="#f0f" />
+
+        <TextView
+            android:id="@+id/used_speace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/myProgressBar"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:text="已用空间："
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/rest_speace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/myProgressBar"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:gravity="left"
+            android:text="剩余空间："
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btn_more_source"
+        android:layout_below="@+id/rl_space">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="#3BECC6"
+                android:gravity="center"
+                android:padding="@dimen/dp_8"
+                android:text="我的本地资源"
+                android:textColor="@color/white" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </ListView>
+        </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/btn_more_source"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:onClick="joinMoreSourceActivity"
         android:padding="@dimen/dp_10"
         android:text="更多资源 》"
-        android:onClick="joinMoreSourceActivity"
         android:textColor="@android:color/holo_blue_light" />
 </RelativeLayout>

@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -61,6 +63,8 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
         finish();
     }
 
+    private String mTags = "";
+
     @Override
     public void onEventMainThread(Message message) {
         super.onEventMainThread(message);
@@ -70,16 +74,17 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
                 if (guide_pro != null && progress.status != Progress.NONE && progress.status != Progress.WAITING) {
 
                     long currSize = progress.currentSize;
-                    long totalSize = progress.totalSize;
-                    if (currSize == totalSize) {
-                        mCurrSize += currSize;
+                    int rate = (int) ((currSize + mCurrSize) * 100 / mTotalSize);
+                    if (progress.status == Progress.FINISH) {
+                        if (TextUtils.isEmpty(mTags) || !mTags.contains(progress.tag)) {
+                            mCurrSize += currSize;
+                            mTags += progress.tag + ",";
+                        }
                     }
 
-                    int rate = (int) ((currSize + mCurrSize) * 100 / mTotalSize);
                     guide_pro.updateRate(rate);
-                    if (rate == 100) {
+                    if (rate >= 100) {
                         joinMainActivity();
-                        //                        SourceSpHelper.getInstance().saveDownLoadedStatus();
                     }
                 }
                 break;
@@ -117,7 +122,7 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
     @Override
     public void onError(int code, String message) {
         // 刷新Token
-        if (code == 480) {
+        if (code == 480 || code == 401) {
             DataUtils.sendBroad("token");
         }
         joinMainActivity();

@@ -100,7 +100,7 @@ public class MoreSourceActivity extends BaseMvpActivity<MoreSourcePresenter> imp
     public void onError(int code, String message) {
         mSwipeRefreshLayout.setRefreshing(false);
         // 刷新Token
-        if (code == 480) {
+        if (code == 480 || code == 401) {
             DataUtils.sendBroad("api");
         } else {
             ToastUtis.show(message);

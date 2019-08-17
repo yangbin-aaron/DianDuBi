@@ -42,8 +42,10 @@ public class LogDownloadListener extends DownloadListener {
     @Override
     public void onProgress(Progress progress) {
         System.out.println("onProgress: " + progress);
-        mMessage.obj = progress;
-        EventBus.getDefault().post(mMessage);
+        if (progress.status != Progress.FINISH) {
+            mMessage.obj = progress;
+            EventBus.getDefault().post(mMessage);
+        }
     }
 
     @Override
@@ -53,7 +55,7 @@ public class LogDownloadListener extends DownloadListener {
         mMessage.obj = progress;
         EventBus.getDefault().post(mMessage);
         String message = progress.exception.getMessage();
-        if ("480".equals(message)) {
+        if ("480".equals(message) || "401".equals(message)) {
             Log.e("down", "Token过期!");
             if (mHandlerToken) {
                 // 刷新Token

@@ -50,7 +50,7 @@ public class App extends Application {
     private String mPath = "";
 
     private void initDownPath() {
-        mPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.datas/";
+        mPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/datas/";
     }
 
     private void initOkGo() {
