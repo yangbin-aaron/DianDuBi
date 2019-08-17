@@ -7,7 +7,9 @@ package cn.com.cunw.diandubiapp.interfaces;
  * @copyright 湖南新云网科技有限公司
  */
 public interface Contants {
-    int WHAT_GUIDE_DOWN = 10000;
+    int WHAT_GUIDE_DOWN = 10002;
+    int WHAT_GUIDE_ERROR = 10004;
+    int WHAT_GUIDE_FINISH = 10005;
     int WHAT_REGISTER_EVENTBUG = 10001;
 
     long MAX_SD_SIZE = 500 * 1024 * 1024;

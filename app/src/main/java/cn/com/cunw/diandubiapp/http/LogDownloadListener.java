@@ -42,18 +42,19 @@ public class LogDownloadListener extends DownloadListener {
     @Override
     public void onProgress(Progress progress) {
         System.out.println("onProgress: " + progress);
-        if (progress.status != Progress.FINISH) {
-            mMessage.obj = progress;
-            EventBus.getDefault().post(mMessage);
-        }
+        mMessage.obj = progress;
+        EventBus.getDefault().post(mMessage);
     }
 
     @Override
     public void onError(Progress progress) {
         System.out.println("onError: " + progress);
         progress.exception.printStackTrace();
-        mMessage.obj = progress;
-        EventBus.getDefault().post(mMessage);
+        Message msg = new Message();
+        msg.what = Contants.WHAT_GUIDE_ERROR;
+        msg.obj = progress;
+        EventBus.getDefault().post(msg);
+
         String message = progress.exception.getMessage();
         if ("480".equals(message) || "401".equals(message)) {
             Log.e("down", "Token过期!");
@@ -70,8 +71,10 @@ public class LogDownloadListener extends DownloadListener {
     @Override
     public void onFinish(File file, Progress progress) {
         System.out.println("onFinish: " + progress);
-        mMessage.obj = progress;
-        EventBus.getDefault().post(mMessage);
+        Message message = new Message();
+        message.what = Contants.WHAT_GUIDE_FINISH;
+        message.obj = progress;
+        EventBus.getDefault().post(message);
     }
 
     @Override

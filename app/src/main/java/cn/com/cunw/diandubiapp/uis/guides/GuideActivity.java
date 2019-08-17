@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -63,32 +62,30 @@ public class GuideActivity extends BaseMvpActivity<MoreSourcePresenter> implemen
         finish();
     }
 
-    private String mTags = "";
-
     @Override
     public void onEventMainThread(Message message) {
         super.onEventMainThread(message);
+        Progress progress = (Progress) message.obj;
+        long currSize = progress.currentSize;
         switch (message.what) {
             case Contants.WHAT_GUIDE_DOWN:
-                Progress progress = (Progress) message.obj;
                 if (guide_pro != null && progress.status != Progress.NONE && progress.status != Progress.WAITING) {
-
-                    long currSize = progress.currentSize;
                     int rate = (int) ((currSize + mCurrSize) * 100 / mTotalSize);
-                    if (progress.status == Progress.FINISH) {
-                        if (TextUtils.isEmpty(mTags) || !mTags.contains(progress.tag)) {
-                            mCurrSize += currSize;
-                            mTags += progress.tag + ",";
-                        }
-                    }
-
                     guide_pro.updateRate(rate);
-                    if (rate >= 100) {
-                        joinMainActivity();
-                    }
                 }
                 break;
+            case Contants.WHAT_GUIDE_FINISH:
+                mCurrSize += currSize;
+                if (mCurrSize == mTotalSize) {
+                    joinMainActivity();
+                }
+                break;
+            case Contants.WHAT_GUIDE_ERROR:
+                Log.e("aaron", "下载失败！");
+                joinMainActivity();
+                break;
         }
+        Log.e("aaron", currSize + " -- " + mCurrSize);
     }
 
     @Override
