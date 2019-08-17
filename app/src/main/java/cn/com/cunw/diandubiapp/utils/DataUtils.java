@@ -51,7 +51,7 @@ public class DataUtils {
             Log.e(TAG, _catch + "initData   url = " + url);
             Log.e(TAG, _catch + "initData   version = " + version);
             Log.e(TAG, _catch + "initData   studentId = " + studentId);
-            url = "http://test.cunwedu.com.cn";
+//            url = "http://test.cunwedu.com.cn";
             SourceSpHelper.getInstance().saveToken("Bearer " + token);
             SourceSpHelper.getInstance().saveAccountId(studentId);
             SourceSpHelper.getInstance().saveUrl(url + "/" + version + "/");
